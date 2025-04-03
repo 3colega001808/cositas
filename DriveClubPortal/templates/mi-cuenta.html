@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Cuenta | DriveClub - Alquiler de Coches por Suscripción</title>
+  <meta name="description" content="Gestiona tus reservas, suscripción y perfil" />
+  <meta name="author" content="DriveClub" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/assets/css/index.css">
+</head>
+
+<body>
+  <div id="root">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg">
+          <a class="navbar-brand" href="/">
+            <h2 class="logo-text">
+              <span class="drive">Drive</span><span class="club">Club</span>
+            </h2>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list fs-1"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Inicio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('vehiculos') }}">Vehículos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('planes') }}">Planes</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('mi_cuenta') }}">Mi Cuenta</a>
+              </li>
+            </ul>
+            <div class="header-actions">
+              {% if user.is_authenticated %}
+              <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary">Cerrar Sesión</a>
+              {% else %}
+              <a href="{{ url_for('login') }}" class="btn btn-outline-secondary">Iniciar Sesión</a>
+              <a href="{{ url_for('login') }}?registro=true" class="btn btn-primary">Registrarse</a>
+              {% endif %}
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Account Banner -->
+    <section class="account-banner">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h1>Mi Cuenta</h1>
+            <p class="lead">Gestiona tus reservas, suscripción y datos personales.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Account Content -->
+    <section class="account-section py-5">
+      <div class="container">
+        <div class="row">
+          <!-- Sidebar -->
+          <div class="col-lg-3 mb-4 mb-lg-0">
+            <div class="account-sidebar">
+              <div class="user-info mb-4">
+                <div class="user-avatar">
+                  <img src="https://i.pravatar.cc/150?img=12" alt="{{ user.nombre }}" class="img-fluid rounded-circle">
+                </div>
+                <div class="user-details">
+                  <h4>{{ user.nombre }} {{ user.apellidos }}</h4>
+                  {% set active_plan = None %}
+                  {% for suscripcion in suscripciones %}
+                    {% if suscripcion.activo %}
+                      {% set active_plan = suscripcion.plan %}
+                    {% endif %}
+                  {% endfor %}
+                  {% if active_plan %}
+                    {% if active_plan.nombre is defined and active_plan.nombre %}
+                      <p class="plan-badge">Plan {{ active_plan.nombre }}</p>
+                    {% else %}
+                      <p class="plan-badge">Plan Activo</p>
+                    {% endif %}
+                  {% else %}
+                    <p class="plan-badge">Sin suscripción activa</p>
+                  {% endif %}
+                </div>
+              </div>
+              <ul class="nav flex-column account-nav" id="accountTabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="reservations-tab" data-bs-toggle="tab" href="#reservations" role="tab" aria-controls="reservations" aria-selected="true">
+                    <i class="bi bi-calendar-check me-2"></i>Mis Reservas
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="subscription-tab" data-bs-toggle="tab" href="#subscription" role="tab" aria-controls="subscription" aria-selected="false">
+                    <i class="bi bi-card-list me-2"></i>Mi Suscripción
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+                    <i class="bi bi-person me-2"></i>Mi Perfil
+                  </a>
+                </li>
+                <li class="nav-item mt-5">
+                  <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="col-lg-9">
+            <div class="tab-content account-content" id="accountTabsContent">
+              <!-- Reservations Tab -->
+              <div class="tab-pane fade show active" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">
+                <div class="content-card">
+                  <h2 class="section-title mb-4">Mis Reservas</h2>
+                  
+                  <ul class="nav nav-tabs mb-4 border-bottom border-2" id="reservationTabs" role="tablist">
+                    <li class="nav-item w-50 text-center" role="presentation">
+                      <button class="nav-link active w-100" id="current-tab" data-bs-toggle="tab" data-bs-target="#current-reservations" type="button" role="tab" aria-controls="current-reservations" aria-selected="true">Actuales</button>
+                    </li>
+                    <li class="nav-item w-50 text-center" role="presentation">
+                      <button class="nav-link w-100" id="past-tab" data-bs-toggle="tab" data-bs-target="#past-reservations" type="button" role="tab" aria-controls="past-reservations" aria-selected="false">Historial</button>
+                    </li>
+                  </ul>
+                  
+                  <div class="tab-content" id="reservationTabsContent">
+                    <div class="tab-pane fade show active" id="current-reservations" role="tabpanel" aria-labelledby="current-tab">
+                      {% set current_reservations = [] %}
+                      {% for reserva in reservas %}
+                        {% if reserva.fecha_fin|string >= now_date|string %}
+                          {% set _ = current_reservations.append(reserva) %}
+                        {% endif %}
+                      {% endfor %}
+                      
+                      {% if current_reservations|length > 0 %}
+                        {% for reserva in current_reservations %}
+                        <div class="reservation-card {% if not loop.first %}mt-4{% endif %}">
+                          <div class="row align-items-center">
+                            <div class="col-md-3">
+                              <img src="{{ reserva.vehiculo.get_imagen_principal() }}" alt="{{ reserva.vehiculo.nombre }}" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-9">
+                              <div class="reservation-details">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap mb-3">
+                                  <div>
+                                    <h4 class="mb-2">{{ reserva.vehiculo.nombre }}</h4>
+                                    <span class="vehicle-type">{{ reserva.vehiculo.tipo.nombre }}</span>
+                                  </div>
+                                  {% if reserva.codigo_qr %}
+                                  <div class="qr-code mt-2 mt-md-0" data-bs-toggle="modal" data-bs-target="#qrModal{{ reserva.id }}" style="cursor: pointer;">
+                                    <i class="bi bi-qr-code"></i>
+                                    <span>Ver QR</span>
+                                  </div>
+                                  {% endif %}
+                                </div>
+                                <div class="reservation-dates mb-3">
+                                  <span class="date-badge"><i class="bi bi-calendar-event me-1"></i> {{ format_date(reserva.fecha_inicio) }} - {{ format_date(reserva.fecha_fin) }}</span>
+                                </div>
+                                <div class="reservation-status mb-3">
+                                  <span class="status-badge active">{{ reserva.estado.nombre }}</span>
+                                </div>
+                                <div class="reservation-actions">
+                                  <button class="btn btn-sm btn-outline-danger">Cancelar Reserva</button>
+                                  <button class="btn btn-sm btn-outline-secondary">Modificar Fechas</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {% if reserva.codigo_qr %}
+                        <!-- QR Modal -->
+                        <div class="modal fade" id="qrModal{{ reserva.id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ reserva.id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="qrModalLabel{{ reserva.id }}">Código QR de reserva</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body text-center">
+                                <p>Presenta este código en el punto de recogida</p>
+                                <img src="{{ reserva.codigo_qr }}" class="img-fluid" alt="QR Code">
+                                <div class="mt-3">
+                                  <p><strong>Vehículo:</strong> {{ reserva.vehiculo.nombre }}</p>
+                                  <p><strong>Fechas:</strong> {{ format_date(reserva.fecha_inicio) }} - {{ format_date(reserva.fecha_fin) }}</p>
+                                  <p><strong>Ubicación:</strong> {{ reserva.ubicacion_recogida }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      {% else %}
+                        <div class="alert alert-info">
+                          <i class="bi bi-info-circle me-2"></i> No tienes reservas activas actualmente.
+                        </div>
+                        <div class="text-center mt-4">
+                          <a href="{{ url_for('vehiculos') }}" class="btn btn-primary">
+                            <i class="bi bi-search me-2"></i>Buscar Vehículos
+                          </a>
+                        </div>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="tab-pane fade" id="past-reservations" role="tabpanel" aria-labelledby="past-tab">
+                      {% set past_reservations = [] %}
+                      {% for reserva in reservas %}
+                        {% if reserva.fecha_fin|string < now_date|string %}
+                          {% set _ = past_reservations.append(reserva) %}
+                        {% endif %}
+                      {% endfor %}
+                      
+                      {% if past_reservations|length > 0 %}
+                        {% for reserva in past_reservations %}
+                        <div class="reservation-card {% if not loop.first %}mt-4{% endif %}">
+                          <div class="row align-items-center">
+                            <div class="col-md-3">
+                              <img src="{{ reserva.vehiculo.get_imagen_principal() }}" alt="{{ reserva.vehiculo.nombre }}" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-9">
+                              <div class="reservation-details">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                  <div>
+                                    <h4 class="mb-2">{{ reserva.vehiculo.nombre }}</h4>
+                                    <span class="vehicle-type">{{ reserva.vehiculo.tipo.nombre }}</span>
+                                  </div>
+                                </div>
+                                <div class="reservation-dates mb-3">
+                                  <span class="date-badge"><i class="bi bi-calendar-event me-1"></i> {{ format_date(reserva.fecha_inicio) }} - {{ format_date(reserva.fecha_fin) }}</span>
+                                </div>
+                                <div class="reservation-status mb-3">
+                                  <span class="status-badge completed">{{ reserva.estado.nombre }}</span>
+                                </div>
+                                <div class="reservation-actions">
+                                  <a href="{{ url_for('vehiculo_detalle', vehicle_id=reserva.vehiculo.id) }}" class="btn btn-sm btn-outline-primary">Reservar de Nuevo</a>
+                                  <button class="btn btn-sm btn-outline-secondary">Dejar Opinión</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      {% else %}
+                        <div class="alert alert-info">
+                          <i class="bi bi-info-circle me-2"></i> No tienes reservas pasadas.
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Subscription Tab -->
+              <div class="tab-pane fade" id="subscription" role="tabpanel" aria-labelledby="subscription-tab">
+                <div class="content-card">
+                  <h2 class="section-title mb-4">Mi Suscripción</h2>
+                  
+                  <!-- Debug: Muestra información en consola -->
+                  <div style="display: none;">
+                    <p>Número de suscripciones: {{ suscripciones|length }}</p>
+                    {% for suscripcion in suscripciones %}
+                    <p>Suscripción {{ loop.index }}:
+                      ID: {{ suscripcion.id }},
+                      Plan ID: {{ suscripcion.plan_id }},
+                      Activo: {{ suscripcion.activo }},
+                      {% if suscripcion.plan %}
+                      Plan Nombre: {{ suscripcion.plan.nombre }}
+                      {% else %}
+                      Plan no cargado
+                      {% endif %}
+                    </p>
+                    {% endfor %}
+                  </div>
+                  
+                  <!-- Depuración (oculta) -->
+                  <div style="display: none;">
+                    <p>Número total de suscripciones: {{ suscripciones|length }}</p>
+                    {% for s in suscripciones %}
+                    <p>Suscripción {{ loop.index }}: 
+                       ID: {{ s.id }}, 
+                       Plan ID: {{ s.plan_id }}, 
+                       Activo: {{ s.activo }}, 
+                       {% if s.plan %}
+                         Plan nombre: {{ s.plan.nombre }}
+                       {% else %}
+                         Plan no disponible
+                       {% endif %}
+                    </p>
+                    {% endfor %}
+                  </div>
+                  
+                  <!-- La suscripción activa se pasa directamente desde el controlador -->
+                  <!-- Verificar si hay suscripción activa y si tiene plan asociado -->
+                  {% if active_subscription and active_subscription.plan %}
+                  <div class="current-plan mb-5">
+                    <div class="row align-items-center">
+                      <div class="col-md-4">
+                        <div class="plan-icon-container">
+                          <i class="bi bi-award"></i>
+                          <h3>
+                            {% if active_subscription.plan and active_subscription.plan.nombre %}
+                              Plan {{ active_subscription.plan.nombre }}
+                            {% else %}
+                              Plan de Suscripción
+                            {% endif %}
+                          </h3>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="plan-details">
+                          <div class="mb-3">
+                            <span class="text-muted">Estado:</span>
+                            <span class="status-badge active ms-2">Activo</span>
+                          </div>
+                          <div class="mb-3">
+                            <span class="text-muted">Fecha de inicio:</span>
+                            <span class="fw-medium ms-2">
+                              {% if active_subscription.fecha_inicio %}
+                                {{ format_date(active_subscription.fecha_inicio) }}
+                              {% else %}
+                                No disponible
+                              {% endif %}
+                            </span>
+                          </div>
+                          <div class="mb-3">
+                            <span class="text-muted">Importe mensual:</span>
+                            <span class="fw-medium ms-2">
+                              {% if active_subscription.plan and active_subscription.plan.precio_mensual %}
+                                {{ format_price(active_subscription.plan.precio_mensual) }}
+                              {% else %}
+                                No disponible
+                              {% endif %}
+                            </span>
+                          </div>
+                          <div class="mb-3">
+                            <span class="text-muted">Estado de pago:</span>
+                            <span class="fw-medium ms-2">
+                              {% if active_subscription.estado_pago == 'pendiente' %}
+                              <span class="badge bg-warning">Pendiente</span>
+                              {% elif active_subscription.estado_pago == 'pagado' %}
+                              <span class="badge bg-success">Pagado</span>
+                              {% else %}
+                              <span class="badge bg-danger">{{ active_subscription.estado_pago }}</span>
+                              {% endif %}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="subscription-actions mb-5">
+                    <h4 class="mb-3">Acciones de Suscripción</h4>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <a href="{{ url_for('planes') }}" class="btn btn-outline-primary w-100">
+                          <i class="bi bi-arrow-repeat me-2"></i>Cambiar Plan
+                        </a>
+                      </div>
+                      <div class="col-md-6">
+                        <button class="btn btn-outline-danger w-100" onclick="return confirm('¿Estás seguro de que deseas cancelar tu suscripción?');">
+                          <i class="bi bi-x-circle me-2"></i>Cancelar Suscripción
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {% else %}
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i> No tienes ninguna suscripción activa actualmente.
+                  </div>
+                  <div class="text-center mt-4">
+                    <a href="{{ url_for('planes') }}" class="btn btn-primary">
+                      <i class="bi bi-plus-circle me-2"></i>Suscribirme a un Plan
+                    </a>
+                  </div>
+                  {% endif %}
+                  
+                  <div class="payment-methods mt-5">
+                    <h4 class="mb-3">Métodos de Pago</h4>
+                    {% if user.metodo_pago %}
+                    <div class="payment-card mb-3">
+                      <div class="row align-items-center">
+                        <div class="col-auto">
+                          <i class="bi bi-credit-card-2-front fs-1 text-primary"></i>
+                        </div>
+                        <div class="col">
+                          <h5 class="mb-1">Tarjeta de crédito</h5>
+                          <p class="mb-0 text-muted">{{ user.metodo_pago }}</p>
+                        </div>
+                        <div class="col-auto">
+                          <button class="btn btn-sm btn-outline-danger" id="removePaymentMethod">
+                            <i class="bi bi-trash me-1"></i>Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                      <i class="bi bi-info-circle me-2"></i> No tienes ningún método de pago registrado.
+                    </div>
+                    {% endif %}
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
+                      <i class="bi bi-plus-circle me-2"></i>Añadir Método de Pago
+                    </button>
+                  </div>
+                  
+                  <!-- Modal para añadir método de pago -->
+                  <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="addPaymentModalLabel">Añadir Método de Pago</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ url_for('agregar_metodo_pago') }}" method="POST">
+                          {{ form.csrf_token }}
+                          <div class="modal-body">
+                            <div class="mb-3">
+                              <label for="card_number" class="form-label">Número de Tarjeta</label>
+                              <input type="text" class="form-control" id="card_number" name="card_number" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+                            </div>
+                            <div class="row mb-3">
+                              <div class="col-md-6">
+                                <label for="expiry_date" class="form-label">Fecha de Vencimiento</label>
+                                <input type="text" class="form-control" id="expiry_date" name="expiry_date" placeholder="MM/YY" maxlength="5" required>
+                              </div>
+                              <div class="col-md-6">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="XXX" maxlength="3" required>
+                              </div>
+                            </div>
+                            <div class="mb-3">
+                              <label for="cardholder_name" class="form-label">Nombre del Titular</label>
+                              <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" required>
+                            </div>
+                            <div class="form-check mb-3">
+                              <input class="form-check-input" type="checkbox" id="saveCard" name="saveCard" value="1" checked>
+                              <label class="form-check-label" for="saveCard">
+                                Guardar esta tarjeta para futuros pagos
+                              </label>
+                            </div>
+                            <div class="alert alert-info">
+                              <i class="bi bi-shield-check me-2"></i> Tus datos de pago están seguros. Utilizamos cifrado de 128-bit para proteger tu información.
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Método de Pago</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      // Formatear número de tarjeta con espacios cada 4 dígitos
+                      const cardNumberInput = document.getElementById('card_number');
+                      if (cardNumberInput) {
+                        cardNumberInput.addEventListener('input', function(e) {
+                          let value = e.target.value.replace(/\D/g, '');
+                          let formattedValue = '';
+                          for (let i = 0; i < value.length; i++) {
+                            if (i > 0 && i % 4 === 0) {
+                              formattedValue += ' ';
+                            }
+                            formattedValue += value[i];
+                          }
+                          e.target.value = formattedValue;
+                        });
+                      }
+                      
+                      // Formatear fecha de vencimiento (MM/YY)
+                      const expiryDateInput = document.getElementById('expiry_date');
+                      if (expiryDateInput) {
+                        expiryDateInput.addEventListener('input', function(e) {
+                          let value = e.target.value.replace(/\D/g, '');
+                          if (value.length > 2) {
+                            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                          }
+                          e.target.value = value;
+                        });
+                      }
+                      
+                      // Manejar eliminación de tarjeta
+                      const removeButton = document.getElementById('removePaymentMethod');
+                      if (removeButton) {
+                        removeButton.addEventListener('click', function() {
+                          if (confirm('¿Estás seguro que quieres eliminar este método de pago?')) {
+                            window.location.href = "{{ url_for('eliminar_metodo_pago') }}";
+                          }
+                        });
+                      }
+                    });
+                  </script>
+                </div>
+              </div>
+              
+              <!-- Profile Tab -->
+              <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="content-card">
+                  <h2 class="section-title mb-4">Mi Perfil</h2>
+                  
+                  <form class="profile-form" method="POST" action="{{ url_for('actualizar_perfil') }}">
+                    {{ form.csrf_token }}
+                    <div class="row mb-4">
+                      <div class="col-md-3">
+                        <div class="profile-picture-container">
+                          <img src="https://i.pravatar.cc/150?img=12" alt="User Profile" class="profile-picture">
+                          <div class="upload-button">
+                            <i class="bi bi-camera-fill"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="row g-3">
+                          <div class="col-md-6">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ user.nombre }}" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="apellidos" class="form-label">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" value="{{ user.apellidos }}" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required readonly>
+                            <small class="text-muted">El email no se puede modificar</small>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ user.telefono if user.telefono else '' }}">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <h4 class="mb-3">Información Personal</h4>
+                    <div class="row g-3 mb-4">
+                      <div class="col-md-6">
+                        <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ user.fecha_nacimiento|string if user.fecha_nacimiento else '' }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="dni" class="form-label">DNI/NIE</label>
+                        <input type="text" class="form-control" id="dni" name="dni" placeholder="Ejemplo: 12345678Z" value="{{ user.dni if user.dni else '' }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="carnet_conducir" class="form-label">Número de Carnet de Conducir</label>
+                        <input type="text" class="form-control" id="carnet_conducir" name="carnet_conducir" placeholder="Introduce tu número de carnet" value="{{ user.carnet_conducir if user.carnet_conducir else '' }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="fecha_caducidad_carnet" class="form-label">Fecha de Caducidad del Carnet</label>
+                        <input type="date" class="form-control" id="fecha_caducidad_carnet" name="fecha_caducidad_carnet" value="{{ user.fecha_caducidad_carnet|string if user.fecha_caducidad_carnet else '' }}">
+                      </div>
+                    </div>
+                    
+                    <h4 class="mb-3">Dirección</h4>
+                    <div class="row g-3 mb-4">
+                      <div class="col-md-6">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Calle, número, piso..." value="{{ user.direccion if user.direccion else '' }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="ciudad" class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad" value="{{ user.ciudad if user.ciudad else '' }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="codigo_postal" class="form-label">Código Postal</label>
+                        <input type="text" class="form-control" id="codigo_postal" name="codigo_postal" placeholder="Código postal" value="{{ user.codigo_postal if user.codigo_postal else '' }}">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="pais" class="form-label">País</label>
+                        <input type="text" class="form-control" id="pais" name="pais" placeholder="País" value="{{ user.pais if user.pais else 'España' }}">
+                    </div>
+                    
+                    <h4 class="mb-3">Cambiar Contraseña</h4>
+                    <div class="row g-3 mb-4">
+                      <div class="col-md-4">
+                        <label for="password_actual" class="form-label">Contraseña Actual</label>
+                        <input type="password" class="form-control" id="password_actual" name="password_actual">
+                      </div>
+                      <div class="col-md-4">
+                        <label for="nuevo_password" class="form-label">Nueva Contraseña</label>
+                        <input type="password" class="form-control" id="nuevo_password" name="nuevo_password">
+                      </div>
+                      <div class="col-md-4">
+                        <label for="confirmar_password" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" class="form-control" id="confirmar_password" name="confirmar_password">
+                      </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                      <a href="{{ url_for('mi_cuenta') }}" class="btn btn-outline-secondary me-2">Cancelar</a>
+                      <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <h2 class="mb-3">
+              <a href="/" class="footer-logo"><span class="drive" style="color: white; ">Drive</span><span class="club" style="color: var(--primary-color);">Club</span></h2></a>
+            <p>La mejor experiencia en alquiler de vehículos por suscripción. Disfruta de la libertad de conducir sin compromisos.</p>
+            <div class="social-icons">
+              <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+              <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4 col-6">
+            <h5>Enlaces</h5>
+            <ul class="footer-links">
+              <li><a href="/">Inicio</a></li>
+              <li><a href="{{ url_for('vehiculos') }}">Vehículos</a></li>
+              <li><a href="{{ url_for('planes') }}">Planes</a></li>
+              <li><a href="{{ url_for('mi_cuenta') }}">Mi Cuenta</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-4 col-6">
+            <h5>Información</h5>
+            <ul class="footer-links">
+              <li><a href="#">Sobre Nosotros</a></li>
+              <li><a href="#">Contacto</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-4 col-6">
+            <h5>Políticas</h5>
+            <ul class="footer-links">
+              <li><a href="#">Términos y Condiciones</a></li>
+              <li><a href="#">Política de Privacidad</a></li>
+              <li><a href="#">Política de Cookies</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-12 col-6">
+            <h5>Contacto</h5>
+            <ul class="footer-links">
+              <li><i class="bi bi-geo-alt"></i> Calle Principal 123, Madrid</li>
+              <li><i class="bi bi-telephone"></i> +34 91 123 45 67</li>
+              <li><i class="bi bi-envelope"></i> info@driveclub.es</li>
+            </ul>
+          </div>
+        </div>
+        <hr class="mt-4 mb-3">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-0">© 2023 DriveClub. Todos los derechos reservados.</p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <p class="mb-0">Diseñado con <i class="bi bi-heart-fill text-primary"></i> por DriveClub</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/screen.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1161 @@
+:root {
+  --primary-color: #e63946;
+  --secondary-color: #1d3557;
+  --dark-color: #0d1b2a;
+  --light-color: #f1faee;
+  --accent-color: #ffd166;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-400: #ced4da;
+  --gray-500: #adb5bd;
+  --gray-600: #6c757d;
+  --gray-700: #495057;
+  --gray-800: #343a40;
+  --gray-900: #212529;
+  --transition: all 0.3s ease;
+  --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* General Styles */
+body {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--gray-900);
+  background-color: #fff;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: #c1272d;
+}
+
+.btn {
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: #c1272d !important;
+  border-color: #c1272d !important;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-outline-secondary {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: #fff;
+}
+
+.section-title {
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 30px;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: var(--shadow);
+  padding: 0;
+}
+
+.navbar {
+  padding: 15px 0;
+}
+
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand h2 {
+  margin: 0;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+.navbar-brand h2 .drive {
+  color: var(--secondary-color);
+}
+
+.navbar-brand h2 .club {
+  color: var(--primary-color);
+}
+
+.navbar-brand img.logo {
+  height: 45px;
+  transition: var(--transition);
+}
+
+.navbar-brand:hover h2 {
+  transform: scale(1.05);
+  transition: var(--transition);
+}
+
+.navbar-nav {
+  margin-left: 20px;
+}
+
+.navbar-nav .nav-link {
+  color: var(--gray-700);
+  font-weight: 500;
+  padding: 10px 15px;
+  position: relative;
+  transition: var(--transition);
+  margin: 0 5px;
+}
+
+.navbar-nav .nav-link:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: var(--transition);
+}
+
+.navbar-nav .nav-link:hover:after,
+.navbar-nav .nav-link.active:after {
+  width: 80%;
+}
+
+.navbar-nav .nav-link.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--primary-color);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-actions .btn {
+  padding: 8px 20px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all 0.3s ease;
+}
+
+.header-actions .btn-outline-secondary {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.header-actions .btn-outline-secondary:hover {
+  background-color: var(--secondary-color) !important;
+  box-shadow: none;
+}
+.header-actions .btn-primary {
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* Mobile menu */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 15px;
+    gap: 10px;
+  }
+  
+  .header-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 12px 0;
+    margin: 0;
+  }
+  
+  .navbar-nav .nav-link:after {
+    left: 0;
+    transform: none;
+  }
+  
+  .navbar-nav .nav-link:hover:after,
+  .navbar-nav .nav-link.active:after {
+    width: 30px;
+  }
+}
+
+/* Footer */
+
+
+/* Footer */
+.footer {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.footer-logo {
+  margin: 0;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+}
+
+.social-icons {
+  display: flex;
+  margin-top: 20px;
+}
+
+.social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: white;
+  transition: var(--transition);
+}
+
+.social-icon:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.footer h5 {
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-links i {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Banner */
+.hero-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=1770&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  height: 80vh;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.hero-banner h1 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.hero-banner p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+/* Cards Section */
+.feature-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+  height: 100%;
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-card .icon-container {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: rgba(230, 57, 70, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.feature-card .icon-container i {
+  font-size: 30px;
+  color: var(--primary-color);
+}
+
+.feature-card h3 {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: var(--secondary-color);
+}
+
+/* Plans Section */
+.plans-section {
+  background-color: var(--gray-100);
+}
+
+.plan-card {
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  height: 100%;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.plan-card.featured {
+  transform: scale(1.05);
+  border: 2px solid var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  z-index: 1;
+}
+
+.plan-card.featured:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.plan-badge {
+  position: absolute;
+  top: 0;
+  right: 30px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 15px;
+  border-radius: 0 0 10px 10px;
+  z-index: 2;
+}
+
+.plan-header {
+  padding: 30px;
+  text-align: center;
+  background-color: var(--gray-100);
+}
+
+.plan-card.featured .plan-header {
+  padding-top: 35px;
+}
+
+.plan-header h3 {
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.plan-header .price {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0;
+}
+
+.plan-header .price span {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--gray-600);
+}
+
+.plan-body {
+  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+  flex: 1;
+}
+
+.plan-features li {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.plan-features li i {
+  color: var(--primary-color);
+  margin-right: 10px;
+}
+
+/* Today's Selection Section */
+.todays-selection {
+  background-color: white;
+}
+
+.featured-vehicle {
+  display: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.featured-vehicle.active {
+  display: block;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.featured-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.featured-content {
+  padding: 30px;
+}
+
+.vehicle-type {
+  display: inline-block;
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--primary-color);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.vehicle-name {
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.vehicle-year {
+  color: var(--gray-600);
+  margin-bottom: 20px;
+}
+
+.specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-name {
+  font-size: 14px;
+  color: var(--gray-600);
+  margin-bottom: 5px;
+}
+
+.spec-value {
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.featured-indicators {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--gray-400);
+  margin: 0 5px;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.indicator.active {
+  background-color: var(--primary-color);
+}
+
+/* Vehicles Page Styles */
+.vehicles-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1983&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 100px 0;
+}
+
+.vehicles-banner h1 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.filter-section {
+  background-color: white;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 10;
+}
+
+.filter-container {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--secondary-color);
+}
+
+.form-select {
+  border-radius: 8px;
+  border-color: var(--gray-300);
+}
+
+.vehicles-grid {
+  background-color: var(--gray-100);
+}
+
+.vehicle-card {
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  height: 100%;
+  transition: var(--transition);
+}
+
+.vehicle-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.vehicle-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.vehicle-card .vehicle-content {
+  padding: 20px;
+}
+
+/* Plans Page Styles */
+.plans-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1964&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 100px 0;
+}
+
+.plans-banner h1 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 15px;
+  border-bottom: 1px solid var(--gray-300);
+  text-align: center;
+}
+
+.comparison-table th {
+  background-color: white;
+  font-weight: 600;
+}
+
+.comparison-table th:first-child,
+.comparison-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+
+.comparison-table th.featured-plan {
+  background-color: rgba(230, 57, 70, 0.1);
+}
+
+.comparison-table td.featured-plan {
+  background-color: rgba(230, 57, 70, 0.05);
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.plans-action td {
+  padding: 25px 15px;
+}
+
+.why-join-section {
+  background-color: white;
+}
+
+.why-join-feature {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.why-join-feature .icon-container {
+  min-width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(230, 57, 70, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.why-join-feature .icon-container i {
+  font-size: 24px;
+  color: var(--primary-color);
+}
+
+.why-join-feature h3 {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: var(--secondary-color);
+}
+
+.why-join-image img {
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+}
+
+.faq-section {
+  background-color: var(--gray-100);
+}
+
+.accordion-item {
+  border: none;
+  margin-bottom: 15px;
+  border-radius: 10px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.accordion-button {
+  background-color: white;
+  color: var(--secondary-color);
+  font-weight: 600;
+  border: none;
+  border-radius: 10px !important;
+  padding: 20px;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: rgba(230, 57, 70, 0.05);
+  color: var(--primary-color);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.accordion-button::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e63946'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.accordion-body {
+  padding: 20px;
+}
+
+.cta-section {
+  padding: 80px 0;
+  background-image: linear-gradient(rgba(29, 53, 87, 0.9), rgba(29, 53, 87, 0.9)), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1770&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+}
+
+.cta-container {
+  padding: 40px;
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  color: white;
+}
+
+.cta-container h2 {
+  font-weight: 700;
+}
+
+/* Vehicle Detail Page Styles */
+.vehicle-detail-section {
+  background-color: var(--gray-100);
+}
+
+.vehicle-images {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.carousel-item img {
+  height: 400px;
+  object-fit: cover;
+}
+
+.technical-specs .row {
+  margin: 0;
+}
+
+.technical-specs .col-6,
+.technical-specs .col-4 {
+  padding: 15px;
+}
+
+.spec-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  height: 100%;
+}
+
+.spec-card .spec-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(230, 57, 70, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.spec-card .spec-icon i {
+  font-size: 20px;
+  color: var(--primary-color);
+}
+
+.spec-card .spec-title {
+  font-size: 14px;
+  color: var(--gray-600);
+  margin-bottom: 5px;
+}
+
+.spec-card .spec-value {
+  font-weight: 600;
+  color: var(--secondary-color);
+  font-size: 18px;
+}
+
+.vehicle-description p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.review-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.reviewer-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.reviewer-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.reviewer-info h5 {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.reviewer-info .rating {
+  color: var(--accent-color);
+  font-size: 14px;
+}
+
+.review-content {
+  line-height: 1.6;
+}
+
+.reservation-sidebar {
+  position: sticky;
+  top: 100px;
+}
+
+.reservation-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.reservation-card h3 {
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+
+.reservation-notes {
+  color: var(--gray-600);
+}
+
+.need-help-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.need-help-card h4 {
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.similar-vehicles-section {
+  background-color: var(--gray-100);
+}
+
+/* Account Page Styles */
+.account-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=1770&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 100px 0;
+}
+
+.account-banner h1 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.account-sidebar {
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gray-300);
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details {
+  text-align: center;
+}
+
+.user-details h4 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.account-nav .nav-link {
+  padding: 12px 15px;
+  color: var(--gray-700);
+  border-radius: 8px;
+  transition: var(--transition);
+  margin-bottom: 5px;
+}
+
+.account-nav .nav-link:hover {
+  background-color: var(--gray-100);
+}
+
+.account-nav .nav-link.active {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.account-nav .nav-link i {
+  margin-right: 10px;
+}
+
+.content-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.nav-tabs {
+  border-bottom: 1px solid var(--gray-300);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav-tabs .nav-link {
+  color: var(--gray-700);
+  border: none;
+  padding: 10px 20px;
+  margin-right: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+  background-color: transparent;
+}
+
+.reservation-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  transition: var(--transition);
+}
+
+.reservation-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.reservation-card .vehicle-img {
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.reservation-details {
+  margin-top: 15px;
+}
+
+.reservation-details .qr-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.reservation-details .qr-code i {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.date-badge {
+  display: inline-block;
+  background-color: var(--gray-100);
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--gray-700);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.status-badge.active {
+  background-color: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+}
+
+.status-badge.completed {
+  background-color: rgba(23, 162, 184, 0.15);
+  color: #17a2b8;
+}
+
+.current-plan {
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--gray-300);
+}
+
+.plan-icon-container {
+  text-align: center;
+}
+
+.plan-icon-container i {
+  font-size: 40px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.plan-icon-container h3 {
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.subscription-actions {
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--gray-300);
+  display: flex;
+  justify-content: center;
+}
+
+.subscription-actions .btn {
+  margin: 15px 10px 0;
+}
+
+.payment-card {
+  background-color: var(--gray-100);
+  border-radius: 1
+}
+
+/*Fixes normales*/
+
+@media (max-width: 768px) {
+  .img-fluid.rounded {
+    max-height: 200px !important;
+    width: 100% !important;
+    object-fit: cover;
+  }
+}
+/*Fixes en pantallas finas: mi cuenta (botones)*/
+@media (max-width: 444px) {
+   .btn-outline-primary {
+    margin-bottom: 10px;
+   }
+
+   .btn-outline-danger {
+    margin-bottom: 10px;
+   }
+}
+
+.bi.bi-heart-fill.text-primary {
+  color: var(--primary-color) !important;
+}

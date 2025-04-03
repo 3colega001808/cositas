@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planes de Suscripción | DriveClub - Alquiler de Coches por Suscripción</title>
+    <meta name="description" content="Descubre nuestros planes de suscripción para alquiler de vehículos" />
+    <meta name="author" content="DriveClub" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/assets/css/index.css">
+  </head>
+
+  <body>
+    <div id="root">
+      <!-- Header -->
+      <header class="header">
+        <div class="container">
+          <nav class="navbar navbar-expand-lg">
+            <a class="navbar-brand" href="/">
+              <h2 class="logo-text">
+                <span class="drive">Drive</span><span class="club">Club</span>
+              </h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <i class="bi bi-list fs-1"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="/">Inicio</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/vehiculos">Vehículos</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" href="/planes">Planes</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/mi-cuenta">Mi Cuenta</a>
+                </li>
+                {% endif %}
+              </ul>
+              <div class="header-actions">
+                {% if user.is_authenticated %}
+                <a href="/logout" class="btn btn-outline-secondary">Cerrar Sesión</a>
+                {% else %}
+                <a href="/login" class="btn btn-outline-secondary">Iniciar Sesión</a>
+                <a href="/login?registro=true" class="btn btn-primary">Registrarse</a>
+                {% endif %}
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Plans Banner -->
+      <section class="plans-banner">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <h1>Planes de Suscripción</h1>
+              <p class="lead">Elige el plan que mejor se adapte a tus necesidades y estilo de vida.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plans Section -->
+      <section class="plans-section py-5">
+        <div class="container">
+          <h2 class="section-title text-center mb-5">Nuestros Planes de Suscripción</h2>
+          <div class="row g-4 justify-content-center">
+            {% for plan in subscription_plans %}
+            <div class="col-md-6 col-lg-4">
+              <div class="plan-card {% if plan.id == 2 %}featured{% endif %}" style="opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;">
+                {% if plan.id == 2 %}<div class="plan-badge">Más Popular</div>{% endif %}
+                <div class="plan-header">
+                  <h3>{{ plan.nombre }}</h3>
+                  <p class="price">{{ format_price(plan.precio_mensual) }}<span>/mes</span></p>
+                </div>
+                <div class="plan-body">
+                  <ul class="plan-features">
+                    {% if plan.caracteristicas_especiales %}
+                      {% for caracteristica in plan.get_caracteristicas() %}
+                        <li>
+                          {% if not caracteristica.startswith('No ') and not caracteristica.startswith('Sin ') %}
+                            <i class="bi bi-check-circle"></i> {{ caracteristica }}
+                          {% else %}
+                            <i class="bi bi-x-lg text-danger"></i> {{ caracteristica[3:] }}
+                          {% endif %}
+                        </li>
+                      {% endfor %}
+                    {% else %}
+                      <li><i class="bi bi-check-circle"></i> Acceso a vehículos {{ "premium" if plan.id > 1 else "básicos" }}</li>
+                      <li><i class="bi bi-check-circle"></i> Cambio de vehículo {{ "quincenal" if plan.id > 1 else "mensual" }}</li>
+                      <li><i class="bi bi-check-circle"></i> {{ plan.kilometraje_mensual }} km mensuales</li>
+                      <li><i class="bi bi-check-circle"></i> Mantenimiento básico incluido</li>
+                      {% if plan.id > 1 %}
+                        <li><i class="bi bi-check-circle"></i> Seguro a todo riesgo</li>
+                        <li><i class="bi bi-check-circle"></i> Asistencia en carretera</li>
+                      {% else %}
+                        <li><i class="bi bi-check-circle"></i> Seguro a terceros</li>
+                        <li><i class="bi bi-x-lg text-danger"></i> Asistencia en carretera</li>
+                      {% endif %}
+                      {% if plan.id > 2 %}
+                        <li><i class="bi bi-check-circle"></i> Entrega y recogida</li>
+                        <li><i class="bi bi-check-circle"></i> Acceso a eventos exclusivos</li>
+                      {% else %}
+                        <li><i class="bi bi-x-lg text-danger"></i> Entrega y recogida</li>
+                        <li><i class="bi bi-x-lg text-danger"></i> Acceso a eventos exclusivos</li>
+                      {% endif %}
+                    {% endif %}
+                  </ul>
+                  {% if user.is_authenticated %}
+                    <form action="{{ url_for('suscribir_plan', plan_id=plan.id) }}" method="POST">
+                      <button type="submit" class="btn {% if plan.id == 2 %}btn-primary{% else %}btn-outline-primary{% endif %} w-100">Elegir Plan</button>
+                    </form>
+                  {% else %}
+                    <a href="{{ url_for('login') }}?next={{ url_for('planes') }}" class="btn {% if plan.id == 2 %}btn-primary{% else %}btn-outline-primary{% endif %} w-100">Iniciar Sesión para Suscribirse</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparison Features Section -->
+      <section class="features-comparison py-5 bg-light">
+        <div class="container">
+          <h2 class="section-title text-center mb-5">Características Detalladas</h2>
+          
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+              <div class="feature-card">
+                <div class="icon-container">
+                  <i class="bi bi-car-front"></i>
+                </div>
+                <h3>Vehículos Disponibles</h3>
+                <p><strong>Básico:</strong> Compactos</p>
+                <p><strong>Premium:</strong> Compactos, Sedán, SUVs</p>
+                <p><strong>Elite:</strong> Todos, incluyendo deportivos</p>
+              </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+              <div class="feature-card">
+                <div class="icon-container">
+                  <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <h3>Cambio de Vehículo</h3>
+                <p><strong>Básico:</strong> Mensual</p>
+                <p><strong>Premium:</strong> Cada 2 semanas</p>
+                <p><strong>Elite:</strong> Ilimitado</p>
+              </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+              <div class="feature-card">
+                <div class="icon-container">
+                  <i class="bi bi-speedometer2"></i>
+                </div>
+                <h3>Kilometraje</h3>
+                <p><strong>Básico:</strong> 1.500 km/mes</p>
+                <p><strong>Premium:</strong> 2.500 km/mes</p>
+                <p><strong>Elite:</strong> Ilimitado</p>
+              </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+              <div class="feature-card">
+                <div class="icon-container">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>Seguro</h3>
+                <p><strong>Básico:</strong> A terceros</p>
+                <p><strong>Premium:</strong> A todo riesgo</p>
+                <p><strong>Elite:</strong> A todo riesgo con ampliación</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Why Join Section -->
+      <section class="why-join-section py-5">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-6">
+              <h2 class="section-title mb-4">¿Por qué unirte a DriveClub?</h2>
+              <div class="why-join-feature mb-4">
+                <div class="icon-container">
+                  <i class="bi bi-cash-coin"></i>
+                </div>
+                <div>
+                  <h3>Sin inversión inicial</h3>
+                  <p>Olvídate de la entrada inicial, depreciación y gastos ocultos asociados a la compra de un vehículo.</p>
+                </div>
+              </div>
+              <div class="why-join-feature mb-4">
+                <div class="icon-container">
+                  <i class="bi bi-gear"></i>
+                </div>
+                <div>
+                  <h3>Sin preocupaciones de mantenimiento</h3>
+                  <p>Nos encargamos de todas las revisiones y mantenimiento para que disfrutes de tu vehículo sin complicaciones.</p>
+                </div>
+              </div>
+              <div class="why-join-feature mb-4">
+                <div class="icon-container">
+                  <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <div>
+                  <h3>Variedad y flexibilidad</h3>
+                  <p>Cambia de vehículo según tus necesidades: un SUV para el fin de semana, un deportivo para impresionar o un eléctrico para el día a día.</p>
+                </div>
+              </div>
+              <div class="why-join-feature">
+                <div class="icon-container">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                  <h3>Tranquilidad total</h3>
+                  <p>Vehículos nuevos, revisados y con todas las garantías. Además, nuestros planes incluyen seguros adaptados a cada necesidad.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+              <div class="why-join-image">
+                <img src="https://images.unsplash.com/photo-1532581140115-3e355d1ed1de?q=80&w=1770&auto=format&fit=crop" alt="Experiencia DriveClub" class="img-fluid rounded">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq-section py-5">
+        <div class="container">
+          <h2 class="section-title text-center mb-5">Preguntas Frecuentes</h2>
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
+                  ¿Cómo funciona la suscripción a DriveClub?
+                </button>
+              </h3>
+              <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  <p>Suscribirse a DriveClub es muy sencillo. Elige el plan que mejor se adapte a tus necesidades, completa el registro, verifica tu identidad y datos de pago, y ¡listo! En 24-48 horas podrás reservar tu primer vehículo. Pagas una cuota mensual que incluye todo excepto el combustible.</p>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                  ¿Puedo cancelar mi suscripción en cualquier momento?
+                </button>
+              </h3>
+              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  <p>Sí, puedes cancelar tu suscripción en cualquier momento, respetando el período de preaviso establecido en cada plan (30, 15 o 7 días). No hay penalizaciones por cancelación siempre que se respete el preaviso correspondiente.</p>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                  ¿Qué sucede si excedo el kilometraje mensual?
+                </button>
+              </h3>
+              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  <p>Si excedes el kilometraje mensual incluido en tu plan, se aplicará un cargo adicional de 0,25€ por kilómetro extra. Te recomendamos elegir un plan que se ajuste a tus necesidades de conducción o considerar una actualización si regularmente excedes tu límite.</p>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                  ¿Cómo funcionan las reservas y la recogida del vehículo?
+                </button>
+              </h3>
+              <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  <p>Las reservas se realizan a través de nuestra plataforma web o app. Una vez confirmada, recibirás un correo electrónico con un código QR que te permitirá acceder al vehículo en la fecha y hora seleccionadas. Nuestros puntos de recogida están ubicados estratégicamente en las principales ciudades. Para el plan Elite, ofrecemos entrega y recogida a domicilio.</p>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                  ¿Qué ocurre en caso de accidente o avería?
+                </button>
+              </h3>
+              <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  <p>En caso de accidente o avería, contacta inmediatamente con nuestro servicio de asistencia 24/7. Dependiendo de tu plan, te proporcionaremos asistencia en carretera y un vehículo de sustitución si fuera necesario. Todos nuestros planes incluyen algún tipo de seguro, con franquicias diferentes según el nivel elegido.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="cta-section py-5">
+        <div class="container">
+          <div class="cta-container text-center">
+            <h2 class="mb-4">¿Listo para disfrutar de la libertad al volante?</h2>
+            <p class="lead mb-4">Únete a DriveClub hoy y descubre una nueva forma de disfrutar de la conducción sin ataduras.</p>
+            {% if not user.is_authenticated %}
+            <a href="{{ url_for('login') }}?registro=true" class="btn btn-primary btn-lg">Comienza Ahora</a>
+            {% else %}
+            <a href="{{ url_for('vehiculos') }}" class="btn btn-primary btn-lg">Explora Vehículos</a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer py-5">
+        <div class="container">
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <h2 class="mb-3">
+                <a href="/" class="footer-logo"><span class="drive" style="color: white; ">Drive</span><span class="club" style="color: var(--primary-color);">Club</span></h2></a>
+              <p>La mejor experiencia en alquiler de vehículos por suscripción. Disfruta de la libertad de conducir sin compromisos.</p>
+              <div class="social-icons">
+                <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+              <h5>Enlaces</h5>
+              <ul class="footer-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/vehiculos">Vehículos</a></li>
+                <li><a href="/planes">Planes</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="/mi-cuenta">Mi Cuenta</a></li>
+                {% endif %}
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+              <h5>Información</h5>
+              <ul class="footer-links">
+                <li><a href="#">Sobre Nosotros</a></li>
+                <li><a href="#">Contacto</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">FAQ</a></li>
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+              <h5>Políticas</h5>
+              <ul class="footer-links">
+                <li><a href="#">Términos y Condiciones</a></li>
+                <li><a href="#">Política de Privacidad</a></li>
+                <li><a href="#">Política de Cookies</a></li>
+              </ul>
+            </div>
+            <div class="col-lg-2 col-md-12 col-6">
+              <h5>Contacto</h5>
+              <ul class="footer-links">
+                <li><i class="bi bi-geo-alt"></i> Calle Principal 123, Madrid</li>
+                <li><i class="bi bi-telephone"></i> +34 91 123 45 67</li>
+                <li><i class="bi bi-envelope"></i> info@driveclub.es</li>
+              </ul>
+            </div>
+          </div>
+          <hr class="mt-4 mb-3">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-0">© 2023 DriveClub. Todos los derechos reservados.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <p class="mb-0">Diseñado con <i class="bi bi-heart-fill text-primary"></i> por DriveClub</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/screen.js"></script>
+  </body>
+</html>

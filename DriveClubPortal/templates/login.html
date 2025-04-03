@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión | DriveClub - Alquiler de Coches por Suscripción</title>
+    <meta name="description" content="Inicia sesión o regístrate en DriveClub" />
+    <meta name="author" content="DriveClub" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/assets/css/index.css">
+    <style>
+      /* Estilos adicionales específicos para la página de login */
+      .login-container {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+      }
+      
+      .login-form-container {
+        padding: 3rem;
+        width: 100%;
+        max-width: 550px;
+        margin: 0 auto;
+        height: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      
+      .login-image {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+      
+      .login-image::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+      }
+      
+      .login-image .overlay-content {
+        position: absolute;
+        bottom: 100px;
+        left: 50px;
+        right: 50px;
+        color: white;
+        z-index: 2;
+      }
+      
+      .login-image .overlay-content h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      
+      .login-header {
+        margin-bottom: 2.5rem;
+      }
+      
+      .login-logo {
+        height: 50px;
+        max-width: 200px;
+      }
+      
+      .login-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--gray-300);
+        margin-bottom: 1.5rem;
+      }
+      
+      .tab-btn {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+        color: var(--gray-600);
+        cursor: pointer;
+        position: relative;
+      }
+      
+      .tab-btn.active {
+        color: var(--primary-color);
+      }
+      
+      .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary-color);
+      }
+      
+      .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 20px 0;
+      }
+      
+      .divider::before,
+      .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--gray-300);
+      }
+      
+      .divider span {
+        padding: 0 10px;
+        color: var(--gray-600);
+        font-size: 14px;
+      }
+      
+      .password-input {
+        position: relative;
+      }
+      
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--gray-600);
+        cursor: pointer;
+        padding: 0;
+      }
+      
+      .password-strength {
+        width: 100%;
+      }
+      
+      .strength-bar {
+        height: 5px;
+        background-color: var(--gray-200);
+        border-radius: 3px;
+        margin-bottom: 5px;
+      }
+      
+      .strength-indicator {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s, background-color 0.3s;
+      }
+      
+      @media (max-width: 991.98px) {
+        .login-form-container {
+          padding: 2rem;
+        }
+        
+        .login-image {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root">
+      <!-- Login Content -->
+      <div class="login-container">
+        <div class="row g-0 h-100 w-100">
+          <!-- Left Panel - Form -->
+          <div class="col-lg-5">
+            <div class="login-form-container">
+              <div class="login-header mb-5">
+                <a class="navbar-brand" href="/">
+                  <h2 class="logo-text">
+                    <span class="drive">Drive</span><span class="club">Club</span>
+                  </h2>
+                </a>
+              </div>
+              
+              <div class="login-tabs mb-4">
+                <button class="tab-btn active" id="loginTabBtn">Iniciar Sesión</button>
+                <button class="tab-btn" id="registerTabBtn">Registrarse</button>
+              </div>
+              
+              <!-- Login Form -->
+              <div class="form-container" id="loginForm">
+                <h1 class="login-title mb-4">Bienvenido de nuevo</h1>
+                
+                <div class="social-login mb-4">
+                  <button class="btn btn-outline-secondary w-100 mb-3">
+                    <i class="bi bi-google me-2"></i>Continuar con Google
+                  </button>
+                </div>
+                
+                <div class="divider">
+                  <span>O</span>
+                </div>
+                
+                <form action="{{ url_for('login') }}" method="POST">
+                  <input type="hidden" name="login" value="1">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                          {{ message }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                  <div class="mb-3">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" name="email" placeholder="tu@email.com" required>
+                  </div>
+                  <div class="mb-4">
+                    <label for="loginPassword" class="form-label">Contraseña</label>
+                    <div class="password-input">
+                      <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Tu contraseña" required>
+                      <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPassword', this)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
+                      <label class="form-check-label" for="rememberMe">Recordarme</label>
+                    </div>
+                    <a href="#" class="forgot-password mt-2 mt-sm-0">¿Olvidaste tu contraseña?</a>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 mb-4">Iniciar Sesión</button>
+                  <p class="text-center mb-0">¿No tienes cuenta? <a href="#" id="switchToRegister">Regístrate aquí</a></p>
+                </form>
+              </div>
+              
+              <!-- Register Form -->
+              <div class="form-container" id="registerForm" style="display: none;">
+                <h1 class="login-title mb-4">Crear una cuenta</h1>
+                
+                <div class="social-login mb-4">
+                  <button class="btn btn-outline-secondary w-100 mb-3">
+                    <i class="bi bi-google me-2"></i>Continuar con Google
+                  </button>
+                </div>
+                
+                <div class="divider">
+                  <span>O</span>
+                </div>
+                
+                <form action="{{ url_for('login') }}" method="POST">
+                  <input type="hidden" name="register" value="1">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                          {{ message }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="registerFirstName" class="form-label">Nombre</label>
+                      <input type="text" class="form-control" id="registerFirstName" name="nombre" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="registerLastName" class="form-label">Apellidos</label>
+                      <input type="text" class="form-control" id="registerLastName" name="apellidos" placeholder="Tus apellidos" required>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="registerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" name="email" placeholder="tu@email.com" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="registerPhone" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="registerPhone" name="telefono" placeholder="+34 612 345 678">
+                  </div>
+                  <div class="mb-4">
+                    <label for="registerPassword" class="form-label">Contraseña</label>
+                    <div class="password-input">
+                      <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Crea una contraseña" oninput="checkPasswordStrength(this.value)" required>
+                      <button type="button" class="password-toggle" onclick="togglePasswordVisibility('registerPassword', this)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                    <div class="password-strength mt-2">
+                      <div class="strength-bar">
+                        <div class="strength-indicator" id="strengthIndicator" style="width: 0%"></div>
+                      </div>
+                      <small class="strength-text" id="strengthText">La contraseña debe tener al menos 8 caracteres</small>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="termsAgree" name="terms" required>
+                      <label class="form-check-label" for="termsAgree">
+                        Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>
+                      </label>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 mb-4">Crear Cuenta</button>
+                  <p class="text-center mb-0">¿Ya tienes cuenta? <a href="#" id="switchToLogin">Inicia sesión aquí</a></p>
+                </form>
+              </div>
+              
+              <div class="login-footer mt-5">
+                <p class="text-center mb-0">© 2023 DriveClub. Todos los derechos reservados.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Panel - Image -->
+          <div class="col-lg-7 d-none d-lg-block">
+            <div class="login-image" style="background-image: url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=1770&auto=format&fit=crop');">
+              <div class="overlay-content">
+                <h2>Disfruta de la libertad al volante</h2>
+                <p class="lead">Únete a DriveClub y experimenta la conducción sin compromisos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching
+        const loginTabBtn = document.getElementById('loginTabBtn');
+        const registerTabBtn = document.getElementById('registerTabBtn');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+
+        // Check URL params for direct access to registration
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('registro') === 'true') {
+          showRegisterForm();
+        }
+
+        loginTabBtn.addEventListener('click', showLoginForm);
+        registerTabBtn.addEventListener('click', showRegisterForm);
+        switchToRegister.addEventListener('click', function(e) {
+          e.preventDefault();
+          showRegisterForm();
+        });
+        switchToLogin.addEventListener('click', function(e) {
+          e.preventDefault();
+          showLoginForm();
+        });
+
+        function showLoginForm() {
+          loginTabBtn.classList.add('active');
+          registerTabBtn.classList.remove('active');
+          loginForm.style.display = 'block';
+          registerForm.style.display = 'none';
+        }
+
+        function showRegisterForm() {
+          loginTabBtn.classList.remove('active');
+          registerTabBtn.classList.add('active');
+          loginForm.style.display = 'none';
+          registerForm.style.display = 'block';
+        }
+      });
+
+      // Toggle password visibility
+      function togglePasswordVisibility(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('bi-eye');
+          icon.classList.add('bi-eye-slash');
+        } else {
+          input.type = 'password';
+          icon.classList.remove('bi-eye-slash');
+          icon.classList.add('bi-eye');
+        }
+      }
+
+      // Password strength checker
+      function checkPasswordStrength(password) {
+        const indicator = document.getElementById('strengthIndicator');
+        const text = document.getElementById('strengthText');
+        
+        // Simple strength calculation
+        let strength = 0;
+        
+        if (password.length >= 8) strength += 25;
+        if (password.match(/[A-Z]/)) strength += 25;
+        if (password.match(/[0-9]/)) strength += 25;
+        if (password.match(/[^A-Za-z0-9]/)) strength += 25;
+        
+        indicator.style.width = strength + '%';
+        
+        if (strength <= 25) {
+          indicator.style.backgroundColor = '#ff4d4d';
+          text.innerHTML = 'Contraseña débil';
+        } else if (strength <= 50) {
+          indicator.style.backgroundColor = '#ffa64d';
+          text.innerHTML = 'Contraseña media';
+        } else if (strength <= 75) {
+          indicator.style.backgroundColor = '#ffff4d';
+          text.innerHTML = 'Contraseña buena';
+        } else {
+          indicator.style.backgroundColor = '#4dff4d';
+          text.innerHTML = 'Contraseña fuerte';
+        }
+      }
+    </script>
+  </body>
+</html>
